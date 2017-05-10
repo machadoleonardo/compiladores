@@ -1,60 +1,57 @@
 /*************************************************************************
 Arquivo a ser processado pelo programa JavaCC.
-Contém:
-       - descrição do analisador léxico para a linguagem X++ 
-       - descrição do analisador sintático para a linguagem X++
+ContÃ©m:
+       - descriÃ§Ã£o do analisador lÃ©xico para a linguagem X++ 
 
 Autor: Marcio Delamaro
-Este programa é parte do livro "Construção de compiladores usando ferra..."
+Este programa Ã© parte do livro "ConstruÃ§Ã£o de compiladores usando ferra..."
 ************************************************************************/
 options {
   STATIC = false;
-  DEBUG_LOOKAHEAD = true;
 }
 
 PARSER_BEGIN(langX)
 package parser;
+
 import java.io.*;
- 
+
 
 public class langX {
 final static String Version = "X++ Compiler - Version 1.0 - 2004";
-int contParseError = 0;           // contador de erros sintáticos
+boolean Menosshort = false; // saÃ­da resumida = falso
 
 
-// Define o método "main" da classe langX.  
+// Define o mÃ©todo "main" da classe langX.  
   public  static void main(String args[]) throws ParseException 
   {
-  boolean debug = false;
-
     String filename = ""; // nome do arquivo a ser analisado
-    langX parser;     // analisador léxico/sintático
+    langX parser;     // analisador lÃ©xico/sintÃ¡tico
     int i;
     boolean ms = false;
 
     System.out.println(Version);
-    // lê os parâmetros passados para o compilador
+    // lÃª os parÃ¢metros passados para o compilador
     for (i = 0; i < args.length - 1; i++)
     {
-    if (args[i].equals("-debug_AS") )
-            debug = true;
+    if ( args[i].toLowerCase().equals("-short") )
+      ms = true;
     else
         {
-            System.out.println("Usage is: java langX [-debug_AS] inputfile");
-            System.exit(0);
+           System.out.println("Usage is: java langX [-short] inputfile");
+           System.exit(0);
         }
     }
 
     if (args[i].equals("-"))
-    {       // lê da entrada padrão      
+    {       // lÃª da entrada padrÃ£o      
         System.out.println("Reading from standard input . . .");
-        parser = new langX(System.in); // cria AS
+        parser = new langX(System.in);
      }
      else 
-    {       // lê do arquivo
+    {       // lÃª do arquivo
         filename = args[args.length-1];  
         System.out.println("Reading from file " + filename + " . . .");
-        try {  // cria AS
+        try {
             parser = new langX(new java.io.FileInputStream(filename));
         } 
     catch (java.io.FileNotFoundException e) {
@@ -62,23 +59,12 @@ int contParseError = 0;           // contador de erros sintáticos
         return;
         }
     } 
-
-    if (! debug) parser.disable_tracing(); // desabilita verbose do AS
-
-    try {
-        parser.program();   // chama o método que faz a análise
-    }
-    catch (ParseException e)
-    {
-    System.err.println(e.getMessage());
-    parser.contParseError = 1;   // não existe recuperação de erros
-    }
-    finally {
-        System.out.println(parser.token_source.foundLexError() +
-                                " Lexical Errors found");
-        System.out.println(parser.contParseError + " Syntactic Errors found");
-     }
-
+    parser.Menosshort = ms;
+    parser.program();   // chama o mÃ©todo que faz a anÃ¡lise
+    if ( parser.token_source.foundLexError() != 0 ) // verifica se houve erro lÃ©xico
+        System.out.println(parser.token_source.foundLexError() + " Lexical Errors found");
+    else
+        System.out.println("Program successfully analyzed.");
 }  // main
 
 static public String im(int x)
@@ -109,7 +95,7 @@ public int foundLexError()
 }
 
 
-/* Espacos a serem desprezados no inicio de cada token */
+/* EspaÃ§os a serem desprezados no inÃ­cio de cada token */
 
 SKIP :
 {
@@ -120,26 +106,16 @@ SKIP :
 | "\f"
 }
 
-SKIP :
+
+
+<linecomment> SKIP:
 {
-  "/*" : multilinecomment
+   "//" ( LETTER | DIGIT )* : DEFAULT
 }
 
-SKIP :
+<blockcomment> SKIP:
 {
-  "//" : singlelinecomment
-}
-
-<multilinecomment> SKIP:
-{
-   "*/" : DEFAULT
-|  <~[]>
-}
-
-<singlelinecomment> SKIP:
-{
-   <["\n","\r"]> : DEFAULT
-|   <~[]>
+  "/*" ( LETTER | DIGIT | "\n" | "\r" )* "*/" : DEFAULT
 }
 
 
@@ -161,13 +137,16 @@ TOKEN :
 | < RETURN: "return" >
 | < STRING: "string" >
 | < SUPER: "super" >
+| < CHAR: "char" >
+| < BOOLEAN: "boolean" >
+| < DOUBLE: "double" >
 }
 
 /* constantes */
 
 TOKEN :
 {
-  < int_constant:(  // números decimais, octais, hexadecimais ou binários
+  < int_constant:(  // nÃºmeros decimais, octais, hexadecimais ou binÃ¡rios
                   (["0"-"9"] (["0"-"9"])* ) | 
                   (["0"-"7"] (["0"-"7"])* ["o", "O"] ) |
                   (["0"-"9"] (["0"-"7","A"-"F","a"-"f"])* ["h", "H"] ) |
@@ -179,19 +158,31 @@ TOKEN :
 |
   < null_constant: "null" > // constante null
 }
+/* literais */
+TOKEN : 
+
+{
+	
+<intliteral: (DIGIT DIGIT*) >
+|
+<floatliteral: (intLiteral "."" ( intLiteral | intLiteral ( "e" | "E" )? "-"? intLiteral )?
+           | intLiteral? "." ( intLiteral | intLiteral ( "e" | "E" )? "-"? intLiteral ))>
+|
+<floatliteral: """ ( LETTER | DIGIT )* """>
+}
 
 /* Identificadores */
 
 TOKEN :
 {
-  < IDENT: <LETTER> (<LETTER>|<DIGIT>)* >
+  < IDENT: <LETTER> (<LETTER>|<DIGIT>| "_")* >
 |
-  < #LETTER:["A"-"Z","a"-"z"] >
+  < #LETTER:(["A"-"Z","a"-"z"])+ >
 |
-  < #DIGIT:["0"-"9"] >
+  < #DIGIT:(["0"-"9"])+ >
 }
 
-/* Simbolos especiais */
+/* SÃ­mbolos especiais */
 
 TOKEN :
 {
@@ -224,7 +215,7 @@ TOKEN :
 | < REM: "%" >
 }
 
-/* Trata os erros léxicos */
+/* Trata os erros lÃ©xicos */
 SPECIAL_TOKEN :
 {
 <INVALID_LEXICAL: 
@@ -273,245 +264,26 @@ SPECIAL_TOKEN :
 
 
 
-void program() :
+JAVACODE void program()
 {
-}
-{
-    [ classlist() ] <EOF>
-}
-
-void classlist(): 
-{
-}
-{
-   classdecl() [ classlist() ]
-}
-
-
-void classdecl():
-{
-}
-{
-   <CLASS>  <IDENT> [ <EXTENDS> <IDENT> ] classbody() 
-}
-
-void classbody():
-{                         
-}
-{
-   <LBRACE>
-      [classlist()]
-      (LOOKAHEAD(3) vardecl() <SEMICOLON>)*
-      (constructdecl())*
-      (methoddecl())* 
-   <RBRACE>
-}
-
-
-void vardecl():
-{
-}
-{
-   (<INT> |  <STRING> | <IDENT> ) 
-   <IDENT> ( <LBRACKET> <RBRACKET>)* 
-  (<COMMA> <IDENT> ( <LBRACKET> <RBRACKET>)* )*  
-}
-
-void constructdecl():
-{
-}
-{
-    <CONSTRUCTOR> methodbody()
-
-}
-
-
-void methoddecl():
-{
-}
-{
-   (<INT> |  <STRING> | <IDENT> ) (<LBRACKET> <RBRACKET>)* 
-   <IDENT> methodbody()
-}
-
-void methodbody():
-{
-}
-{
-    <LPAREN> paramlist() <RPAREN> statement()
-}
-
-void paramlist():
-{
-}
-{
-   [
-    (<INT> |  <STRING> | <IDENT>) <IDENT> (<LBRACKET> <RBRACKET>)* 
-    (<COMMA> (<INT> |  <STRING> | <IDENT>) <IDENT> (<LBRACKET> <RBRACKET>)* )*
-   ]
-}
-
-void statement():
-{
-}
-{
-    LOOKAHEAD(2)
-    vardecl() <SEMICOLON>
-|
-    atribstat() <SEMICOLON> 
-|
-    printstat() <SEMICOLON>
-|
-    readstat() <SEMICOLON>
-|
-    returnstat() <SEMICOLON>
-|
-    superstat() <SEMICOLON>
-|
-    ifstat() 
-|
-    forstat() 
-|
-    <LBRACE> statlist() <RBRACE> 
-|
-    <BREAK> <SEMICOLON>
-|
-    <SEMICOLON>
-}
-
-
-void atribstat():
-{
-}
-{
-    lvalue() <ASSIGN> ( alocexpression() | expression())
-}
-
-void printstat():
-{
-}
-{
-    <PRINT> expression()
-}
-
-void readstat():
-{
-}
-{
-    <READ> lvalue()
-}
-
-
-void returnstat():
-{
-}
-{  
-    <RETURN> [expression()]
-}
-
-
-void superstat():
-{
-}
-{
-    <SUPER> <LPAREN> arglist() <RPAREN>
-}
-
-void ifstat():
-{
-}
-{
-    <IF> <LPAREN> expression() <RPAREN> statement()
-    [ <ELSE> statement()]
-}
-
-
-
-void forstat():
-{
-}
-{
-    <FOR> <LPAREN> [atribstat()] <SEMICOLON>
-                   [expression()] <SEMICOLON>
-                   [atribstat()] <RPAREN>
-                    statement()
-}
-
-void  statlist() :
-{
-}
-{
-   statement() [statlist()]
-}
-
-void lvalue() :
-{
-}
-{
-   <IDENT> (
-           <LBRACKET> expression() <RBRACKET> |
-           <DOT> <IDENT> [<LPAREN> arglist() <RPAREN>]
-         )*
-}
-
-void alocexpression() :
-{
-}
-{
-    <NEW> ( 
-             LOOKAHEAD(2) <IDENT> <LPAREN> arglist() <RPAREN> | 
-             ( <INT> | <STRING> | <IDENT> )  
-             (<LBRACKET> expression() <RBRACKET>)+
-          )
-} 
-
-
-void expression() :
-{
-}
-{
-    numexpr() [( <LT> | <GT> | <LE> | <GE> | <EQ> | <NEQ>) numexpr()]
-}
-
-void numexpr():
-{
-}
-{
-    term() ((<PLUS> | <MINUS>) term())*
-}
-
-void term():
-{
-}
-{
-    unaryexpr() ((<STAR> | <SLASH>| <REM>) unaryexpr())*
-}
-
-void unaryexpr() :
-{
-}
-{
-   [(<PLUS> | <MINUS>)] factor()
-}
-
-
-void factor():
-{
-}
-{
-
-    
-    ( 
-       <int_constant> | 
-       <string_constant> | 
-       <null_constant> |
-       lvalue() |
-       <LPAREN> expression() <RPAREN>)
-}
-
-void arglist():
-{
-}
-{
-    [expression() (<COMMA> expression())*]
+Token t;
+    do
+    {
+    t = getNextToken();
+    Token st = t;
+        while ( st.specialToken != null)
+        st = st.specialToken;
+        do {
+           if ( Menosshort )
+          System.out.println(st.image + "  " + 
+                                 im(st.kind) + " " +
+                                 st.kind);
+           else
+              System.out.println("Line: " + st.beginLine + 
+                                 " Column: " + st.beginColumn + 
+                                 " " + st.image +
+                                 "  " + im(st.kind) + "  "+t.kind);
+          st = st.next;       
+        } while (st != t.next);
+    } while (t.kind != langXConstants.EOF);  
 }
