@@ -110,12 +110,12 @@ SKIP :
 
 <linecomment> SKIP:
 {
-   "//" ( LETTER | DIGIT )* : DEFAULT
+   "// (LETTER | DIGIT)*" : DEFAULT
 }
 
 <blockcomment> SKIP:
 {
-  "/*" ( LETTER | DIGIT | "\n" | "\r" )* "*/" : DEFAULT
+  "/* (LETTER | DIGIT | '\n' | '\r')* */" : DEFAULT
 }
 
 
@@ -158,17 +158,19 @@ TOKEN :
 |
   < null_constant: "null" > // constante null
 }
+
 /* literais */
 TOKEN : 
-
 {
 	
-<intliteral: (DIGIT DIGIT*) >
+<intLiteral: (<DIGIT> (<DIGIT>)*) >
 |
-<floatliteral: (intLiteral "."" ( intLiteral | intLiteral ( "e" | "E" )? "-"? intLiteral )?
-           | intLiteral? "." ( intLiteral | intLiteral ( "e" | "E" )? "-"? intLiteral ))>
+<floatliteral: (
+			<intLiteral> "." (<intLiteral> | <intLiteral> ( "e" | "E" )? ("-")? <intLiteral>)?
+           | (<intLiteral>)? "." ( <intLiteral> | <intLiteral> ( "e" | "E" )? ("-")? <intLiteral> )
+           )>
 |
-<floatliteral: """ ( LETTER | DIGIT )* """>
+<stringliteral: """ ( <LETTER> | <DIGIT> )* """>
 }
 
 /* Identificadores */
