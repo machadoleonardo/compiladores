@@ -106,16 +106,28 @@ SKIP :
 | "\f"
 }
 
-
-
-<linecomment> SKIP:
+SKIP :
 {
-   "// (LETTER | DIGIT)*" : DEFAULT
+  "/*" : blockComment
 }
 
-<blockcomment> SKIP:
+SKIP :
 {
-  "/* (LETTER | DIGIT | '\n' | '\r')* */" : DEFAULT
+  "//" : lineComment
+}
+
+<blockComment> SKIP:
+{
+   "*/" : DEFAULT
+|  <~[]>
+|  <(<LETTER> | <DIGIT> | "\n" | "\r")*>
+}
+
+<lineComment> SKIP:
+{
+   <["\n","\r"]> : DEFAULT
+|   <~[]>
+|  <(<LETTER> | <DIGIT>)*>
 }
 
 
@@ -159,6 +171,8 @@ TOKEN :
   < null_constant: "null" > // constante null
 }
 
+
+
 /* literais */
 TOKEN : 
 {
@@ -172,6 +186,8 @@ TOKEN :
 |
 <stringliteral: """ ( <LETTER> | <DIGIT> )* """>
 }
+
+
 
 /* Identificadores */
 
