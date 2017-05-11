@@ -6,7 +6,7 @@ import java.io.*;
 
 
 public class langX implements langXConstants {
-final static String Version = "X++ Compiler - Version 1.0 - 2017";
+final static String Version = "X++ Compiler - Version 1.0 - 2004";
 boolean Menosshort = false; // saída resumida = falso
 
 
@@ -222,7 +222,7 @@ String s;
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[57];
+    boolean[] la1tokens = new boolean[63];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -239,7 +239,7 @@ String s;
         }
       }
     }
-    for (int i = 0; i < 57; i++) {
+    for (int i = 0; i < 63; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

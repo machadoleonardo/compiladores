@@ -3,8 +3,8 @@ Arquivo a ser processado pelo programa JavaCC.
 Contém:
        - descrição do analisador léxico para a linguagem X++ 
 
-Autor: Marcio Delamaro
-Este programa é parte do livro "Construção de compiladores usando ferra..."
+Autores: Leonardo Machado ,Marco Antonio Burgin, Rafael Judar
+Analisador Lexico disciplina Intruducao de Compiladores"
 ************************************************************************/
 options {
   STATIC = false;

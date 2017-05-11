@@ -11,110 +11,110 @@ public interface langXConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int BREAK = 8;
+  int BREAK = 14;
   /** RegularExpression Id. */
-  int CLASS = 9;
+  int CLASS = 15;
   /** RegularExpression Id. */
-  int CONSTRUCTOR = 10;
+  int CONSTRUCTOR = 16;
   /** RegularExpression Id. */
-  int ELSE = 11;
+  int ELSE = 17;
   /** RegularExpression Id. */
-  int EXTENDS = 12;
+  int EXTENDS = 18;
   /** RegularExpression Id. */
-  int FOR = 13;
+  int FOR = 19;
   /** RegularExpression Id. */
-  int IF = 14;
+  int IF = 20;
   /** RegularExpression Id. */
-  int INT = 15;
+  int INT = 21;
   /** RegularExpression Id. */
-  int NEW = 16;
+  int NEW = 22;
   /** RegularExpression Id. */
-  int PRINT = 17;
+  int PRINT = 23;
   /** RegularExpression Id. */
-  int READ = 18;
+  int READ = 24;
   /** RegularExpression Id. */
-  int RETURN = 19;
+  int RETURN = 25;
   /** RegularExpression Id. */
-  int STRING = 20;
+  int STRING = 26;
   /** RegularExpression Id. */
-  int SUPER = 21;
+  int SUPER = 27;
   /** RegularExpression Id. */
-  int CHAR = 22;
+  int CHAR = 28;
   /** RegularExpression Id. */
-  int BOOLEAN = 23;
+  int BOOLEAN = 29;
   /** RegularExpression Id. */
-  int DOUBLE = 24;
+  int DOUBLE = 30;
   /** RegularExpression Id. */
-  int int_constant = 25;
+  int int_constant = 31;
   /** RegularExpression Id. */
-  int string_constant = 26;
+  int string_constant = 32;
   /** RegularExpression Id. */
-  int null_constant = 27;
+  int null_constant = 33;
   /** RegularExpression Id. */
-  int intLiteral = 28;
+  int intLiteral = 34;
   /** RegularExpression Id. */
-  int floatliteral = 29;
+  int floatliteral = 35;
   /** RegularExpression Id. */
-  int stringliteral = 30;
+  int stringliteral = 36;
   /** RegularExpression Id. */
-  int IDENT = 31;
+  int IDENT = 37;
   /** RegularExpression Id. */
-  int LETTER = 32;
+  int LETTER = 38;
   /** RegularExpression Id. */
-  int DIGIT = 33;
+  int DIGIT = 39;
   /** RegularExpression Id. */
-  int LPAREN = 34;
+  int LPAREN = 40;
   /** RegularExpression Id. */
-  int RPAREN = 35;
+  int RPAREN = 41;
   /** RegularExpression Id. */
-  int LBRACE = 36;
+  int LBRACE = 42;
   /** RegularExpression Id. */
-  int RBRACE = 37;
+  int RBRACE = 43;
   /** RegularExpression Id. */
-  int LBRACKET = 38;
+  int LBRACKET = 44;
   /** RegularExpression Id. */
-  int RBRACKET = 39;
+  int RBRACKET = 45;
   /** RegularExpression Id. */
-  int SEMICOLON = 40;
+  int SEMICOLON = 46;
   /** RegularExpression Id. */
-  int COMMA = 41;
+  int COMMA = 47;
   /** RegularExpression Id. */
-  int DOT = 42;
+  int DOT = 48;
   /** RegularExpression Id. */
-  int ASSIGN = 43;
+  int ASSIGN = 49;
   /** RegularExpression Id. */
-  int GT = 44;
+  int GT = 50;
   /** RegularExpression Id. */
-  int LT = 45;
+  int LT = 51;
   /** RegularExpression Id. */
-  int EQ = 46;
+  int EQ = 52;
   /** RegularExpression Id. */
-  int LE = 47;
+  int LE = 53;
   /** RegularExpression Id. */
-  int GE = 48;
+  int GE = 54;
   /** RegularExpression Id. */
-  int NEQ = 49;
+  int NEQ = 55;
   /** RegularExpression Id. */
-  int PLUS = 50;
+  int PLUS = 56;
   /** RegularExpression Id. */
-  int MINUS = 51;
+  int MINUS = 57;
   /** RegularExpression Id. */
-  int STAR = 52;
+  int STAR = 58;
   /** RegularExpression Id. */
-  int SLASH = 53;
+  int SLASH = 59;
   /** RegularExpression Id. */
-  int REM = 54;
+  int REM = 60;
   /** RegularExpression Id. */
-  int INVALID_LEXICAL = 55;
+  int INVALID_LEXICAL = 61;
   /** RegularExpression Id. */
-  int INVALID_CONST = 56;
+  int INVALID_CONST = 62;
 
   /** Lexical state. */
   int DEFAULT = 0;
   /** Lexical state. */
-  int linecomment = 1;
+  int blockComment = 1;
   /** Lexical state. */
-  int blockcomment = 2;
+  int lineComment = 2;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -124,8 +124,14 @@ public interface langXConstants {
     "\"\\n\"",
     "\"\\r\"",
     "\"\\f\"",
-    "\"// (LETTER | DIGIT)*\"",
-    "\"/* (LETTER | DIGIT | \\\'\\n\\\' | \\\'\\r\\\')* */\"",
+    "\"/*\"",
+    "\"//\"",
+    "\"*/\"",
+    "<token of kind 9>",
+    "<token of kind 10>",
+    "<token of kind 11>",
+    "<token of kind 12>",
+    "<token of kind 13>",
     "\"break\"",
     "\"class\"",
     "\"constructor\"",
